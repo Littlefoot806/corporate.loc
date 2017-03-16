@@ -7,6 +7,7 @@ use Corp\Repositories\SlidersRepository;
 use Corp\Repositories\PortfoliosRepository;
 use Corp\Repositories\ArticlesRepository;
 use Config;
+use Auth;
 
 
 class IndexController extends SiteController
@@ -18,7 +19,6 @@ class IndexController extends SiteController
             $this->s_rep = $s_rep;
             $this->p_rep = $p_rep;
             $this->a_rep = $a_rep;
-
             $this->bar = 'right';
             $this->template = env('THEME').'.index';
             

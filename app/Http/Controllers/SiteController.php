@@ -45,6 +45,11 @@ class SiteController extends Controller
 			$rightBar = view(env('THEME').'.rightBar')->with('content_rightBar', $this->contentRightBar)->render();
 			$this->vars = array_add($this->vars, 'rightBar', $rightBar);
 		}
+
+        if($this->contentLeftBar)  {
+            $leftBar = view(env('THEME').'.leftBar')->with('content_leftBar', $this->contentLeftBar)->render();
+            $this->vars = array_add($this->vars, 'leftBar', $leftBar);
+        }
 	
 		$this->vars = array_add($this->vars, 'bar', $this->bar);
 
@@ -60,7 +65,7 @@ class SiteController extends Controller
     	return view($this->template)->with($this->vars);
     }
 
-    protected function getMenu() {
+    public function getMenu() {
 
     	$menu = $this->m_rep->get();
 
