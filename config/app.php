@@ -182,6 +182,13 @@ return [
 
         'Lavary\Menu\ServiceProvider',
 
+        //HTML & FORM
+
+         Collective\Html\HtmlServiceProvider::class,
+
+        // IMAGES
+         Intervention\Image\ImageServiceProvider::class
+
     ],
 
     /*
@@ -232,6 +239,11 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'Menu'  => 'Lavary\Menu\Facade',
+
+        'Form' => Collective\Html\FormFacade::class,
+        'HTML' => Collective\Html\HtmlFacade::class,
+
+        'Image' => Intervention\Image\Facades\Image::class
 
     ],
 

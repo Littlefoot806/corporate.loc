@@ -11,8 +11,8 @@
 					<ul>
 						<li class="text-field">
 							<label for="login">
-								<span class="label">Name</span> <br />
-								<span class="sublabel">This is the name</span>
+								<span class="label">Login</span> <br />
+								<span class="sublabel">This is the login</span>
 							</label>
 							<div class="input-prepend"><span class="add-on"><i class="icon-user"></i></span><input type="text" name="login" id="login" class="required" value=""></div>
 							@if($errors->has('login'))

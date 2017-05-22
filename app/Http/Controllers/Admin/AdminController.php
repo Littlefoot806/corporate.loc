@@ -18,12 +18,11 @@ class AdminController extends \Corp\Http\Controllers\Controller
     protected $title;
     protected $vars;
 
-	public function __construct() {
+	
+	public function renderOutput() {
 
 		$this->user = Auth::user();
-	}
 
-	public function renderOutput() {
 		$this->vars = array_add($this->vars, 'title', $this->title);
 
 		$menu = $this->getMenu();
@@ -32,6 +31,7 @@ class AdminController extends \Corp\Http\Controllers\Controller
 		$this->vars = array_add($this->vars, 'navigation', $navigation);
 
 		if($this->content) {
+			$content = $this->content;
 		$this->vars = array_add($this->vars, 'content', $content);
 		}
 		$footer = view(env('THEME').'.admin.footer')->render();
@@ -48,11 +48,11 @@ class AdminController extends \Corp\Http\Controllers\Controller
 				
 			}*/
 
-			$menu->add('Статьи', array('route' => 'articles.index'));
-			$menu->add('Портфолио', array('route' => 'articles.index'));
-			$menu->add('Меню', array('route' => 'articles.index'));
-			$menu->add('Пользователи', array('route' => 'articles.index'));
-			$menu->add('Привелегии', array('route' => 'articles.index'));
+			$menu->add('Статьи', array('route' => 'admin.articles.index'));
+			$menu->add('Портфолио', array('route' => 'admin.articles.index'));
+			$menu->add('Меню', array('route' => 'admin.menus.index'));
+			$menu->add('Пользователи', array('route' => 'admin.articles.index'));
+			$menu->add('Привелегии', array('route' => 'admin.permissions.index'));
 
 
 		});

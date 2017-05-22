@@ -13,7 +13,7 @@
 	{{session('status')}}
   </div>
 @endif
-{{ dump(Session::all()) }}
+
 <div id="content-page" class="content group">
 	<div class="hentry group">
 		<form id="contact-form-contact-us" class="contact-form" method="post" action="{{ route('contacts') }}" enctype="multipart/form-data">

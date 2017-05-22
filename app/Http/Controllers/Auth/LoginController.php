@@ -25,12 +25,17 @@ class LoginController extends Controller
     {
         return 'login';
     }
+
+    public function showLoginForm()
+    {
+        return view(env('THEME').'.login')->with('title', 'Панель администратора');
+    }
     /**
      * Where to redirect users after login.
      *
      * @var string
      */
-    protected $redirectTo = 'admin';
+    protected $redirectTo = '/admin';
 
     /**
      * Create a new controller instance.

@@ -3,10 +3,23 @@
 namespace Corp\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
+use Corp\Http\Requests\ArticleRequest;
 use Corp\Http\Controllers\Controller;
+use Corp\Repositories\ArticlesRepository;
+use Corp\Category;
+use Corp\Article;
+use Gate;
 
-class ArticlesController extends Controller
+
+class ArticlesController extends AdminController
 {
+
+
+    public function __construct(ArticlesRepository $a_rep){
+        $this->a_rep = $a_rep;
+        $this->template = env('THEME').'.admin.articles';
+
+    }
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +27,23 @@ class ArticlesController extends Controller
      */
     public function index()
     {
-        //
+        if(Gate::denies('VIEW_ADMIN_ARTICLES')) {
+            abort(403, 'Unauthorized Page Request');
+        }
+        
+
+        $this->title = 'Менеджер статтей';
+
+        $articles = $this->getArticles();
+
+        $this->content = view(env('THEME').'.admin.articles_content')->with('articles', $articles)->render();
+
+        return $this->renderOutput();
+
+    }
+    public function getArticles()
+    {
+        return $this->a_rep->get();
     }
 
     /**
@@ -24,7 +53,26 @@ class ArticlesController extends Controller
      */
     public function create()
     {
-        //
+        if(Gate::denies('save', new Article)){
+            abort(403);
+        }
+        $this->template = env('THEME').'.admin.articles';
+        $this->title = "Добавление материала";
+
+        $categories = Category::select(['title','alias','parent_id','id'])->get();
+
+        $lists = array();
+
+        foreach($categories as $category) {
+            if( $category->parent_id == 0 ) {
+                $lists[$category->title] = array();
+            }else{
+                $lists[$categories->where('id', $category->parent_id)->first()->title][$category->id] = $category->title;
+            }
+        }
+        $this->content = view(env('THEME'). '.admin.articles_create_content')->with('categories', $lists)->render();
+
+        return $this->renderOutput();
     }
 
     /**
@@ -33,9 +81,19 @@ class ArticlesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ArticleRequest $request)
     {
-        //
+        
+        $result = $this->a_rep->addArticle($request);
+
+        if(is_array($result) && !empty($result['error'])) {
+            return back()->withErrors($result);
+        }
+
+        return redirect('admin')->with($result);
+
+        
+
     }
 
     /**
@@ -55,9 +113,31 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Article $article)
     {
-        //
+        if(Gate::denies('edit', new Article)) {
+            abort(403);
+        }
+
+        $article->img = json_decode($article->img);
+
+        $categories = Category::select(['title','alias','parent_id','id'])->get();
+
+        $lists = array();
+
+        foreach($categories as $category) {
+            if( $category->parent_id == 0 ) {
+                $lists[$category->title] = array();
+            }else{
+                $lists[$categories->where('id', $category->parent_id)->first()->title][$category->id] = $category->title;
+            }
+        }
+
+        $this->title = "Редактирование материала - ".$article->title;
+
+        $this->content = view(env('THEME'). '.admin.articles_create_content')->with(['categories' => $lists, 'article' => $article])->render();
+
+        return $this->renderOutput();
     }
 
     /**
@@ -67,9 +147,15 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ArticleRequest $request, Article $article)
     {
-        //
+        $result = $this->a_rep->updateArticle($request, $article);
+
+        if(is_array($result) && !empty($result['error'])) {
+            return back()->withErrors($result);
+        }
+
+        return redirect('admin')->with($result);
     }
 
     /**
@@ -78,8 +164,14 @@ class ArticlesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Article $article)
     {
-        //
+         $result = $this->a_rep->deleteArticle($article);
+
+        if(is_array($result) && !empty($result['error'])) {
+            return back()->withErrors($result);
+        }
+
+        return redirect('admin')->with($result);
     }
 }
